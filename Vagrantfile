@@ -11,7 +11,7 @@ $install_script = <<SCRIPT
 
   # GRUB breaks the installation on upgrade so hold it.
   apt-mark hold grub-pc
-  
+
   apt-get upgrade -qq
 
   # And apt-mark hold will segmentation fault the next time we provision because
@@ -35,7 +35,7 @@ $install_script = <<SCRIPT
   ##############################################################################
 
   apt-get install -qq build-essential gcc
-      
+
 
 
   ##############################################################################
@@ -141,7 +141,7 @@ Vagrant.configure("2") do |config|
   ##############################################################################
   # Forward ports from Vagrant to host machine.
   ##############################################################################
-  
+
   # PostgreSQL runs on port 5432.
   config.vm.network :forwarded_port, guest: 5432, host: 5432
 
@@ -154,6 +154,10 @@ Vagrant.configure("2") do |config|
   # Forward NGINX webserver from 80 to 8000 on host because cannot typically
   # use port 80 on host machines.
   config.vm.network :forwarded_port, guest: 80, host: 8000
+
+  # Sinatra runs on port 4567
+  # When running you have to do ruby myapp.rb -o 0.0.0.0
+  config.vm.network :forwarded_port, guest: 4567, host: 4567
 
 
 end
