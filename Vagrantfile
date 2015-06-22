@@ -156,7 +156,7 @@ Vagrant.configure("2") do |config|
   config.vm.network :forwarded_port, guest: 80, host: 8000
 
   # Sinatra runs on port 4567
-  # When running you have to do ruby myapp.rb -o 0.0.0.0
+  # When running you have to do rackup -p4567 --host 0.0.0.0
   config.vm.network :forwarded_port, guest: 4567, host: 4567
 
 
