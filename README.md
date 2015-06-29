@@ -17,19 +17,19 @@ the `vagrant` executable at `/opt/vagrant/bin` and you will need to add this to
 your path.
 
 
-Starting a VM
--------------
+Starting the Vagrant
+--------------------
 To build and start the Vagrant, run:
 
     vagrant up
 
-This will build and install the VM if it hasn't been created already. This step
-may take some time the first time it is run. When it is complete, you can ssh
-onto the instance using:
+This will build and install the Vagrant if it hasn't been created already. This
+step may take some time the first time it is run. When it is complete, you can
+SSH onto the instance using:
 
     vagrant ssh
 
-The directory containing the Vagrantfile is available on the Vagrant under
+The directory containing the `Vagrantfile` is available on the Vagrant under
 `/vagrant`:
 
     cd /vagrant
@@ -37,6 +37,29 @@ The directory containing the Vagrantfile is available on the Vagrant under
 When finished, you should exit the SSH session and destroy the VM:
 
     vagrant destroy
+
+
+Connecting to PostgreSQL
+------------------------
+The Vagrant comes with a PostgreSQL database installed. Connect as the
+`postgres` user which is set to have password `password`. There is a
+pre-existing database named `postgres` than can be used for developing.
+
+When connecting, you may also need to use host `localhost` and port `5432`.
+This port is exported from Vagrant to the machine on which the Vagrant is
+running so should be available there too.
+
+
+Running Sinatra
+---------------
+Port 4567 is exported from the Vagrant to the machine running the Vagrant so
+Sinatra applications can be run on the Vagrant and available on the machine
+hosting the Vagrant.
+
+The Sinatra application needs to be started with settings to listen on the
+external interface. e.g. start the application using:
+
+    rackup -p4567 --host 0.0.0.0
 
 
 Backing up a Vagrant Box
@@ -54,7 +77,6 @@ the same name in your Vagrant environment:
 And then up the instance without rerunning the installation provisioning:
 
     vagrant up --no-provisioning MakersAcademy
-
 
 
 Vagrant Commmands
