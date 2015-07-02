@@ -39,10 +39,49 @@ $install_script = <<SCRIPT
 
 
   ##############################################################################
-  # Install PostgreSQL
+  # Install PostgreSQL 9.1
   ##############################################################################
 
   apt-get install -qq postgresql postgresql-client
+
+  # Set initial PostgreSQL user and password to postgres:password
+  sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'password';"
+
+  # Configure PostgreSQL to listen on the external interface of the Vagrant.
+  # This is best done by setting the entire configuration file so that it is
+  # updated robustly on reruns of the provisioning. We just want the
+  # listen_addresses to be '*' though.
+
+  cat > /etc/postgresql/9.1/main/postgresql.conf <<POSTGRES
+data_directory = '/var/lib/postgresql/9.1/main'
+hba_file = '/etc/postgresql/9.1/main/pg_hba.conf'
+ident_file = '/etc/postgresql/9.1/main/pg_ident.conf'
+external_pid_file = '/var/run/postgresql/9.1-main.pid'
+listen_addresses = '*'
+port = 5432
+max_connections = 100
+unix_socket_directory = '/var/run/postgresql'
+ssl = true
+shared_buffers = 24MB
+log_line_prefix = '%t '
+datestyle = 'iso, mdy'
+lc_messages = 'en_US'
+lc_monetary = 'en_US'
+lc_numeric = 'en_US'
+lc_time = 'en_US'
+default_text_search_config = 'pg_catalog.english'
+POSTGRES
+
+  # Allow user access to PostgreSQL from outside the Vagrant.
+  cat > /etc/postgresql/9.1/main/pg_hba.conf <<POSTGRES
+local   all             postgres                                peer
+local   all             all                                     peer
+host    all             all             0.0.0.0/0               md5
+host    all             all             ::1/128                 md5
+POSTGRES
+
+  # Restart PostgreSQL to pick up the changes
+  service postgresql restart
 
 
 
