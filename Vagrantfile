@@ -161,5 +161,8 @@ Vagrant.configure("2") do |config|
   # When running you have to do rackup -p4567 --host 0.0.0.0
   config.vm.network :forwarded_port, guest: 4567, host: 4567
 
+  # KarmaJS commonly uses 9876
+  config.vm.network :forwarded_port, guest: 9876, host: 9876
+
 
 end
