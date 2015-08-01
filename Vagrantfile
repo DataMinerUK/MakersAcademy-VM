@@ -62,9 +62,9 @@ $install_script = <<SCRIPT
 
   # Install NodeJS if not already installed.
   if [ ! -f /usr/bin/node ]; then
-    wget -q http://nodejs.org/dist/v0.12.3/node-v0.12.3-linux-x64.tar.gz
-    tar xzf node-v0.12.3-linux-x64.tar.gz --strip-components=1 -C /usr
-    rm node-v0.12.3-linux-x64.tar.gz
+    wget -q http://nodejs.org/dist/v0.12.7/node-v0.12.7-linux-x64.tar.gz
+    tar xzf node-v0.12.7-linux-x64.tar.gz --strip-components=1 -C /usr
+    rm node-v0.12.7-linux-x64.tar.gz
   fi
 
 
