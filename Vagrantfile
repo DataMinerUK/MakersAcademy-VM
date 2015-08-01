@@ -155,6 +155,32 @@ POSTGRES
 
 
   ##############################################################################
+  # Install a Java Runtime
+  ##############################################################################
+
+  apt-get install -qq openjdk-7-jre-headless
+
+
+
+  ##############################################################################
+  # Install Chrome
+  ##############################################################################
+
+  apt-get install -qq gconf-service libasound2 libatk1.0-0 libgconf-2-4
+  apt-get install -qq libgtk2.0-0 libnspr4 libnss3 libxcomposite1 libxcursor1
+  apt-get install -qq libxdamage1 libxfixes3 libxi6 libxrandr2 libxss1 libxtst6
+  apt-get install -qq libappindicator1 xdg-utils
+
+  # Install Chrome if not already available.
+  if [ ! -f /usr/bin/google-chrome ]; then
+    wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+    dpkg -i google-chrome-stable_current_amd64.deb
+    rm google-chrome-stable_current_amd64.deb
+  fi
+
+
+
+  ##############################################################################
   # Install libraries and tools for Makers Academy
   ##############################################################################
 
