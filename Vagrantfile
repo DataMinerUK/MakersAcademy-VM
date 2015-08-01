@@ -26,7 +26,7 @@ $install_script = <<SCRIPT
   # Install Basics
   ##############################################################################
 
-  apt-get install -qq wget curl
+  apt-get install -qq wget curl vim
 
 
 
