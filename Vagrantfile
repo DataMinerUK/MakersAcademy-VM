@@ -116,6 +116,10 @@ $install_script = <<SCRIPT
 
   npm install -g jasmine
   npm install -g mocha
+  npm install -g http-server
+  npm install -g bower
+  npm install -g protractor
+  npm install -g karma-cli
 
 
 SCRIPT
