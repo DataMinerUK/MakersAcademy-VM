@@ -44,7 +44,8 @@ $install_script = <<SCRIPT
 
   # PostgreSQL is a pain about locale settings. Need to be right before install.
   locale-gen en_US.UTF-8
-  update-locale LANG=en_US.UTF-8 LC_CTYPE=en_US.UTF-8
+  update-locale LANG=en_US.UTF-8 LC_ALL=en_GB.UTF-8
+  . /etc/default/locale
 
   apt-get install -qq postgresql postgresql-client
   apt-get install -qq postgresql-contrib postgresql-server-dev-9.1 libpq-dev
@@ -64,6 +65,12 @@ $install_script = <<SCRIPT
 
   # Set vagrant user and password to vagrant:password
   sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'password';"
+
+  # bin/rake db:create fails unless the template1 database has UTF-8 encoding.
+  sudo -u postgres psql -c "update pg_database set datistemplate=false where datname='template1';"
+  sudo -u postgres psql -c "drop database template1;"
+  sudo -u postgres psql -c "create database template1 with owner=postgres encoding='UTF-8' lc_collate='en_US.utf8' lc_ctype='en_US.utf8' template template0;"
+  sudo -u postgres psql -c "update pg_database set datistemplate=true where datname='template1';"
 
   # Configure PostgreSQL to listen on the external interface of the Vagrant.
   # This is best done by setting the entire configuration file so that it is
@@ -144,6 +151,32 @@ POSTGRES
 
   # Need to add vagrant user to the rvm group to use RVM in Vagrant.
   usermod -a -G rvm vagrant
+
+
+
+  ##############################################################################
+  # Install a Java Runtime
+  ##############################################################################
+
+  apt-get install -qq openjdk-7-jre-headless
+
+
+
+  ##############################################################################
+  # Install Chrome
+  ##############################################################################
+
+  apt-get install -qq gconf-service libasound2 libatk1.0-0 libgconf-2-4
+  apt-get install -qq libgtk2.0-0 libnspr4 libnss3 libxcomposite1 libxcursor1
+  apt-get install -qq libxdamage1 libxfixes3 libxi6 libxrandr2 libxss1 libxtst6
+  apt-get install -qq libappindicator1 xdg-utils
+
+  # Install Chrome if not already available.
+  if [ ! -f /usr/bin/google-chrome ]; then
+    wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+    dpkg -i google-chrome-stable_current_amd64.deb
+    rm google-chrome-stable_current_amd64.deb
+  fi
 
 
 
