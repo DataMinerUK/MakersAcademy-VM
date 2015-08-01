@@ -26,7 +26,7 @@ $install_script = <<SCRIPT
   # Install Basics
   ##############################################################################
 
-  apt-get install -qq wget curl
+  apt-get install -qq wget curl vim
 
 
 
@@ -43,45 +43,8 @@ $install_script = <<SCRIPT
   ##############################################################################
 
   apt-get install -qq postgresql postgresql-client
+  apt-get install -qq postgresql-contrib postgresql-server-dev-9.1 libpq-dev
 
-  # Set initial PostgreSQL user and password to postgres:password
-  sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'password';"
-
-  # Configure PostgreSQL to listen on the external interface of the Vagrant.
-  # This is best done by setting the entire configuration file so that it is
-  # updated robustly on reruns of the provisioning. We just want the
-  # listen_addresses to be '*' though.
-
-  cat > /etc/postgresql/9.1/main/postgresql.conf <<POSTGRES
-data_directory = '/var/lib/postgresql/9.1/main'
-hba_file = '/etc/postgresql/9.1/main/pg_hba.conf'
-ident_file = '/etc/postgresql/9.1/main/pg_ident.conf'
-external_pid_file = '/var/run/postgresql/9.1-main.pid'
-listen_addresses = '*'
-port = 5432
-max_connections = 100
-unix_socket_directory = '/var/run/postgresql'
-ssl = true
-shared_buffers = 24MB
-log_line_prefix = '%t '
-datestyle = 'iso, mdy'
-lc_messages = 'en_US'
-lc_monetary = 'en_US'
-lc_numeric = 'en_US'
-lc_time = 'en_US'
-default_text_search_config = 'pg_catalog.english'
-POSTGRES
-
-  # Allow user access to PostgreSQL from outside the Vagrant.
-  cat > /etc/postgresql/9.1/main/pg_hba.conf <<POSTGRES
-local   all             postgres                                peer
-local   all             all                                     peer
-host    all             all             0.0.0.0/0               md5
-host    all             all             ::1/128                 md5
-POSTGRES
-
-  # Restart PostgreSQL to pick up the changes
-  service postgresql restart
 
 
 
@@ -99,9 +62,9 @@ POSTGRES
 
   # Install NodeJS if not already installed.
   if [ ! -f /usr/bin/node ]; then
-    wget -q http://nodejs.org/dist/v0.12.3/node-v0.12.3-linux-x64.tar.gz
-    tar xzf node-v0.12.3-linux-x64.tar.gz --strip-components=1 -C /usr
-    rm node-v0.12.3-linux-x64.tar.gz
+    wget -q http://nodejs.org/dist/v0.12.7/node-v0.12.7-linux-x64.tar.gz
+    tar xzf node-v0.12.7-linux-x64.tar.gz --strip-components=1 -C /usr
+    rm node-v0.12.7-linux-x64.tar.gz
   fi
 
 
@@ -197,6 +160,9 @@ Vagrant.configure("2") do |config|
   # Sinatra runs on port 4567
   # When running you have to do rackup -p4567 --host 0.0.0.0
   config.vm.network :forwarded_port, guest: 4567, host: 4567
+
+  # KarmaJS commonly uses 9876
+  config.vm.network :forwarded_port, guest: 9876, host: 9876
 
 
 end
