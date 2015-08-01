@@ -173,6 +173,8 @@ POSTGRES
   npm install -g protractor
   npm install -g karma-cli
 
+  apt-get install -qq imagemagick
+
 
 SCRIPT
 
