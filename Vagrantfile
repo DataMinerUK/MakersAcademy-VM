@@ -45,6 +45,58 @@ $install_script = <<SCRIPT
   apt-get install -qq postgresql postgresql-client
   apt-get install -qq postgresql-contrib postgresql-server-dev-9.1 libpq-dev
 
+  # Set initial PostgreSQL user and password to postgres:password
+  sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'password';"
+
+  # Check for vagrant user already created. This user is used in
+  # localhost default access from the Vagrant. Need to || true silence the
+  # grep so the exit code is zero or the vagrant init will error.
+  HAS_VAGRANT_USER=$(sudo -u postgres psql -c "SELECT usename FROM pg_user WHERE usename = 'vagrant'" | grep vagrant || true)
+
+  # Create the vagrant user if it doesn't already exist.
+  if [ -z "$HAS_VAGRANT_USER" ]; then
+    sudo -u postgres createuser -drS vagrant
+  fi
+
+  # Set vagrant user and password to vagrant:password
+  sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'password';"
+
+  # Configure PostgreSQL to listen on the external interface of the Vagrant.
+  # This is best done by setting the entire configuration file so that it is
+  # updated robustly on reruns of the provisioning. We just want the
+  # listen_addresses to be '*' though.
+  cat > /etc/postgresql/9.1/main/postgresql.conf <<POSTGRES
+data_directory = '/var/lib/postgresql/9.1/main'
+hba_file = '/etc/postgresql/9.1/main/pg_hba.conf'
+ident_file = '/etc/postgresql/9.1/main/pg_ident.conf'
+external_pid_file = '/var/run/postgresql/9.1-main.pid'
+listen_addresses = '*'
+port = 5432
+max_connections = 100
+unix_socket_directory = '/var/run/postgresql'
+ssl = true
+shared_buffers = 24MB
+log_line_prefix = '%t '
+datestyle = 'iso, mdy'
+lc_messages = 'en_US'
+lc_monetary = 'en_US'
+lc_numeric = 'en_US'
+lc_time = 'en_US'
+default_text_search_config = 'pg_catalog.english'
+POSTGRES
+
+  # Allow user access to PostgreSQL from outside the Vagrant and
+  # trust all localhost access from inside the Vagrant.
+  cat > /etc/postgresql/9.1/main/pg_hba.conf <<POSTGRES
+local   all             postgres                                peer
+local   all             all                                     peer
+host    all             all             0.0.0.0/0               md5
+host    all             all             ::1/128                 md5
+host    all             all             127.0.0.1/32            trust
+POSTGRES
+
+  # Restart PostgreSQL to pick up the changes
+  service postgresql restart
 
 
 
