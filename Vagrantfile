@@ -42,6 +42,10 @@ $install_script = <<SCRIPT
   # Install PostgreSQL 9.1
   ##############################################################################
 
+  # PostgreSQL is a pain about locale settings. Need to be right before install.
+  locale-gen en_US.UTF-8
+  update-locale LANG=en_US.UTF-8 LC_CTYPE=en_US.UTF-8
+
   apt-get install -qq postgresql postgresql-client
   apt-get install -qq postgresql-contrib postgresql-server-dev-9.1 libpq-dev
 
