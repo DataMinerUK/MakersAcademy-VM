@@ -19,7 +19,9 @@ your path.
 
 Starting the Vagrant
 --------------------
-To build and start the Vagrant, run:
+
+Put the [Vagrantfile](https://github.com/DataMinerUK/MakersAcademy-VM/blob/master/Vagrantfile) at the top of your projects directory for Makers.
+To build and start the Vagrant, in your projects directory, run:
 
     vagrant up
 
@@ -33,10 +35,6 @@ The directory containing the `Vagrantfile` is available on the Vagrant under
 `/vagrant`:
 
     cd /vagrant
-
-When finished, you should exit the SSH session and destroy the VM:
-
-    vagrant destroy
 
 
 Connecting to PostgreSQL
