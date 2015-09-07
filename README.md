@@ -49,6 +49,15 @@ When connecting, you may also need to use host `localhost` and port `5432`.
 This port is exported from Vagrant to the machine on which the Vagrant is
 running so should be available there too.
 
+Running Rails
+--------------
+
+You need to bind to host 0.0.0.0
+
+```
+rails s -b 0.0.0.0
+```
+
 
 Running Sinatra
 ---------------
